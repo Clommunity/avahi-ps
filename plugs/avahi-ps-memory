@@ -1,0 +1,71 @@
+#!/bin/bash
+# 
+
+add_host(){
+
+	# TODO: Validate if exist address node.
+	(avahi-resolve-address -n ${NODENAME}.${DEVICE_NAME}.local 2> /dev/null | grep -q "${PUBLIC_IP}" ) && 
+		avahi-publish-address -R ${NODENAME}.${DEVICE_NAME}.local ${PUBLIC_IP} &
+}
+
+add_service(){
+
+	local _TXT
+
+	_TXT=$(echo "$4"|tr "&" " ")
+
+	avahi-publish-service -H ${NODENAME}.${DEVICE_NAME}.local $1 $2 $3 $_TXT &
+
+}
+
+# Find 
+find_(){
+
+	avahi-browse -aktrp|grep -e "=;$CLOUD_NAME;IPv4;.*;$1;.*;$2"|awk -F ";" '{print $7"("$5")-> "$8}'
+
+}
+
+publish_service() {
+	echo $@
+
+	local _DESCRIBE
+	local _TYPE
+	local _PORT
+	local _TXT
+
+	if [ $# -lt 3 ]
+	then
+		echo "To publish a <describe> <type> <port> "
+	fi
+
+	_DESCRIBE=$1
+	_TYPE="_$2._tcp"
+	_PORT=$3
+	_TXT=${4:-""}
+	add_host 
+	add_service $_DESCRIBE $_TYPE $_PORT $_TXT
+}
+
+find_service(){
+
+	local _SERVICE
+	local _HOST
+	echo "in find_:$@"
+	echo "$CLOUD_NAME"
+	if [ -z $1 ]
+	then 
+		echo "All service"
+		_SERVICE=".*"
+	else
+		_SERVICE="_$1._tcp"
+	fi
+	if [ -z $2 ]
+	then
+		echo "All hosts"
+		_HOST=".*"
+	else
+		_HOST="$2.$CLOUD_NAME.local"
+	fi
+	find_ "$_SERVICE" "$_HOST"
+
+}
