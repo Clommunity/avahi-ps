@@ -4,8 +4,10 @@
 add_host(){
 
 	# TODO: Validate if exist address node.
-	(avahi-resolve-address -n ${NODENAME}.${DEVICE_NAME}.local 2> /dev/null | grep -q "${PUBLIC_IP}" ) && 
+	if [ $(avahi-resolve-address -n ${NODENAME}.${DEVICE_NAME}.local 2> /dev/null | grep "${PUBLIC_IP}" | wc -l) -lt 1 ]
+	then 
 		avahi-publish-address -R ${NODENAME}.${DEVICE_NAME}.local ${PUBLIC_IP} &
+	fi
 }
 
 add_service(){
