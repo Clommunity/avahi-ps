@@ -16,7 +16,7 @@ rem_host(){
 		local _PROCES
 
 		_PROCES=$(ps faux| grep "avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP}"|grep -v grep|awk '{print $2}')
-		kill -9 $_PROCES
+		[ ! -z $_PROCES ] && kill -9 $_PROCES
 
 }
 
