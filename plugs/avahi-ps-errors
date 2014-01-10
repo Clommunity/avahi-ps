@@ -1,0 +1,16 @@
+#!/bin/bash
+
+list_exist_functions="publish_service unpublish_service search_service"
+list_noexist_functions="save_service"
+
+for i in $list_exist_functions;
+do
+	eval "$i(){ echo \"Don't exist '$i' function.\"; exit ;} "
+
+done
+
+for i in $list_noexist_functions;
+do 
+	eval "$i() { return; }"
+done
+
