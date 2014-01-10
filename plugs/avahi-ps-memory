@@ -12,8 +12,11 @@ add_host(){
 }
 
 rem_host(){
+	
+		local _PROCES
 
-		killall -9 avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP}	
+		_PROCES=$(avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP}|awk '{print $2}')
+		killall -9 	$_PROCES
 
 }
 
