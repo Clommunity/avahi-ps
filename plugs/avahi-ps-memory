@@ -3,11 +3,17 @@
 
 add_host(){
 
-	# TODO: Validate if exist address node.
+	# Validate if exist address node.
 	if [ $(avahi-resolve-address -n ${NODENAME}.${CLOUD_NAME}.local 2> /dev/null | grep "${PUBLIC_IP}" | wc -l) -lt 1 ]
 	then 
 		avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP} &
 	fi
+
+}
+
+rem_host(){
+
+		killall -9 avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP}	
 
 }
 
@@ -33,8 +39,14 @@ rem_service(){
 	do 
 		kill -9 $i
 	done
+	if [ $(ps fuax |grep avahi-publish-service|grep -v grep| wc -l) -lt 1 ]
+	then
+		rem_host
+	fi
 
 }
+
+
 # Find 
 find_(){
 
