@@ -6,7 +6,7 @@ add_host(){
 	# Validate if exist address node.
 	if [ $(avahi-resolve-address -n ${NODENAME}.${CLOUD_NAME}.local 2> /dev/null | grep "${PUBLIC_IP}" | wc -l) -lt 1 ]
 	then 
-		avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP} &
+		avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP} 2> /dev/null &
 	fi
 
 }
@@ -16,7 +16,7 @@ rem_host(){
 		local _PROCES
 
 		_PROCES=$(ps faux| grep "avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP}"|grep -v grep|awk '{print $2}')
-		[ ! -z $_PROCES ] && kill -9 $_PROCES
+		[ ! -z "$_PROCES" ] && kill -9 $_PROCES
 
 }
 
@@ -26,7 +26,7 @@ add_service(){
 
 	_TXT=$(echo "$4"|tr "&" " ")
 
-	avahi-publish-service -H ${NODENAME}.${CLOUD_NAME}.local $1 $2 $3 $_TXT &
+	avahi-publish-service -H ${NODENAME}.${CLOUD_NAME}.local $1 $2 $3 $_TXT 2> /dev/null &
 
 	save_service ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP} $1 $2 $3 $_TXT 
 }
@@ -53,7 +53,7 @@ rem_service(){
 # Find 
 find_(){
 
-	avahi-browse -aktrp|grep -e "=;$DEVICE_NAME;IPv4;.*;$1;.*;$2"|awk -F ";" '{print $7"("$5")-> "$8}'
+	avahi-browse -aktrp|grep -e "=;$DEVICE_NAME;IPv4;.*;$1;.*;$2"|awk -F ";" '{print $5";"$4";"$7";"$8";"$9";"$10}'
 
 }
 
@@ -90,18 +90,14 @@ search_service(){
 
 	local _SERVICE
 	local _HOST
-	echo "in find_:$@"
-	echo "$CLOUD_NAME"
 	if [ -z $1 ]
 	then 
-		echo "All service"
 		_SERVICE=".*"
 	else
 		_SERVICE="_$1._tcp"
 	fi
 	if [ -z $2 ]
 	then
-		echo "All hosts"
 		_HOST=".*\.$CLOUD_NAME\.local"
 	else
 		_HOST="$2\.$CLOUD_NAME\.local"

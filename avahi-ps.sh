@@ -30,7 +30,6 @@ fi
 
 # Variables 
 PLUG_DIR="./plugs/"
-CONNECTS_DIR="./connects/"
 IPv="IPv4"
 
 DATABASE="none"
