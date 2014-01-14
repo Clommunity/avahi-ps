@@ -20,6 +20,11 @@ avahi-ps-help(){
 	exit
 
 }
+filepath(){
+	local _dir
+	_dir=$(dirname $0)
+	echo $(cd $_dir;pwd)
+}
 
 # Start program
 
@@ -29,7 +34,7 @@ then
 fi
 
 # Variables 
-PLUG_DIR="./plugs/"
+PLUG_DIR=$(filepath)"/plugs/"
 IPv="IPv4"
 
 DATABASE="none"

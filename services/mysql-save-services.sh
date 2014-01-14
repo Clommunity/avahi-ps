@@ -1,8 +1,13 @@
 #!/bin/bash
 
 
+filepath(){
+        local _dir
+        _dir=$(dirname $0)
+        echo $(cd $_dir;pwd)
+}
 
-CMD=./avahi-ps.sh
+CMD=$(filepath)/../avahi-ps.sh
 TSERVICES="services"
 # Buscar els nodes que son del tipus mysqlsaveservices
 
