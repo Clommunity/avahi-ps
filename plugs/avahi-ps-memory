@@ -90,13 +90,13 @@ search_service(){
 
 	local _SERVICE
 	local _HOST
-	if [ -z $1 ]
+	if [ -z "$1" -o "$1" == "." ]
 	then 
 		_SERVICE=".*"
 	else
 		_SERVICE="_$1._tcp"
 	fi
-	if [ -z $2 ]
+	if [ -z "$2" -o "$2" == "." ]
 	then
 		_HOST=".*\.$CLOUD_NAME\.local"
 	else
