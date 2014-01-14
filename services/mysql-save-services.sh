@@ -1,40 +1,39 @@
 #!/bin/bash
 
-
-filepath(){
-        local _dir
-        _dir=$(dirname $0)
-        echo $(cd $_dir;pwd)
-}
-
-CMD=$(filepath)/../avahi-ps.sh
+CMD=avahi-ps
+NODENAME=$(uname -n)
 TSERVICES="services"
+TIMEOUT=5
+
 # Buscar els nodes que son del tipus mysqlsaveservices
 
-_SERVERS="$(${CMD} search mysqlsaveservices)"
+SERVERS="$(${CMD} search mysqlsaveservices)"
 
 # Buscar tots els servies
 
-_SERVICES="$(${CMD} search)"
+SERVICES="$(${CMD} search . $NODENAME)"
 
-[ -z $_SERVERS ] && echo "Don't find any server with 'mysqlsaveservices'."
-# Guarder el IFS
-OIFS=$IFS
-IFS=$(echo -e '\n') 
-# Per cada servidor:
-for i in $_SERVERS;
-do
-	for n in $_SERVICES
-	do
-		echo $i":"$n
-	done
-done
-IFS=$OIFS
 
 save_register(){
-	#TODO: Validar que no existeix
+	local _TXT
+	local _JSON
+	local _SERVER
 
-	echo $@;
-
-	echo "INSERT INTO ${TSERVICES} values (null, );"
+	_TXT=$(echo $2| awk -F ";" '{print $6}'|tr -d '"'|tr " " "&")
+	_JSON=$(echo $2";"$_TXT | awk -F ";" '{print "{\"type\":\""$1"\",\"description\":\""$2"\",\"hostname\":\""$3"\",\"ip\":\""$4"\",\"port\":"$5",\"txt\":\""$7"\"}" }')
+	_SERVER=$(echo $1|awk -F ";" '{print $4":"$5}') 
+	curl -m $TIMEOUT -X POST -d "$_JSON" -H 'Content-Type:application/json' http://$_SERVER/$TSERVICES > /dev/null 2>&1
+	#curl -m -X POST 
 }
+
+[ -z $SERVERS ] && echo "Don't find any server with 'mysqlsaveservices'."
+
+# Per cada servidor:
+echo "$SERVERS"| while read i;
+do
+	echo "$SERVICES"| while read n
+	do
+		save_register "$i" "$n"		
+	done
+done
+
