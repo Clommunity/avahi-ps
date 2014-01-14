@@ -34,19 +34,36 @@ then
 fi
 
 # Variables 
-PLUG_DIR=$(filepath)"/plugs/"
+FILE_PATH=$(filepath)
+INSTALL_PATH="/usr/sbin"
+INSTALL_PLUG_PATH="/usr/share/avahi-ps"
+if [ "$FILE_PATH" == "$INSTALL_PATH" ]
+then
+	FILE_PATH="$INSTALL_PLUG_PATH"	
+fi
+PLUG_DIR="$FILE_PATH/plugs/"
 IPv="IPv4"
 
 DATABASE="none"
 PUBLIC_DEVICE="wlan0"
 CLOUD_NAME="guifi"
-#DEVICE_NAME=${CLOUD_NAME}
+DEVICE_NAME=${CLOUD_NAME}
 DEVICE_NAME="demo"
 EXECUTE_IN="memory"
 ERRORS_PLUG="errors"
 SAVE_SERVICE="none"
 
+GETINCONF_FILE=/etc/getinconf-client.conf
+
 # Calculate Variables.
+
+if [ -f $GETINCONF_FILE ]
+then
+	. $GETINCONF_FILE	
+	DEVICE_NAME=${NETWORK_NAME}
+	PUBLIC_DEVICE=${INTERNAL_DEV}	
+fi
+
 PUBLIC_IP=$(ip addr show dev $PUBLIC_DEVICE|grep "inet "|awk '{print $2}'|awk -F "/" {'print $1'})
 FILENAME="avahi-ps-"
 NODENAME=$(uname -n)
