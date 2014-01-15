@@ -19,11 +19,11 @@ save_register(){
 	local _JSON
 	local _SERVER
 
+	
 	_TXT=$(echo $2| awk -F ";" '{print $6}'|tr -d '"'|tr " " "&")
-	_JSON=$(echo $2";"$_TXT | awk -F ";" '{print "{\"type\":\""$1"\",\"description\":\""$2"\",\"hostname\":\""$3"\",\"ip\":\""$4"\",\"port\":"$5",\"txt\":\""$7"\"}" }')
+	_JSON=$(echo $2";"$_TXT | awk -F ";" '{print "{\"type\":\""$1"\",\"description\":\""$2"\",\"hostname\":\""$3"\",\"ip\":\""$4"\",\"port\":\""$5"\",\"txt\":\""$7"\"}" }')
 	_SERVER=$(echo $1|awk -F ";" '{print $4":"$5}') 
 	curl -m $TIMEOUT -X POST -d "$_JSON" -H 'Content-Type:application/json' http://$_SERVER/$TSERVICES > /dev/null 2>&1
-	#curl -m -X POST 
 }
 
 [ -z $SERVERS ] && echo "Don't find any server with 'mysqlsaveservices'."
@@ -33,7 +33,10 @@ echo "$SERVERS"| while read i;
 do
 	echo "$SERVICES"| while read n
 	do
-		save_register "$i" "$n"		
+		if [ ! -z "$n" ] && [ ! -z "$i" ];
+		then 
+			save_register "$i" "$n"
+		fi
 	done
 done
 
