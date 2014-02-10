@@ -35,7 +35,7 @@ fi
 
 # Variables 
 FILE_PATH=$(filepath)
-INSTALL_PATH="/usr/bin"
+INSTALL_PATH="/usr/sbin"
 INSTALL_PLUG_PATH="/usr/share/avahi-ps"
 if [ "$FILE_PATH" == "$INSTALL_PATH" ]
 then
@@ -52,16 +52,8 @@ DEVICE_NAME="demo"
 EXECUTE_IN="memory"
 ERRORS_PLUG="errors"
 SAVE_SERVICE="none"
-TIMEOUT=240 # 4*60
 
 GETINCONF_FILE=/etc/getinconf-client.conf
-
-# Timeout for this script!
-# Disabled in this moment, because program needs control when is end.
-#(
-#	sleep $TIMEOUT
-#	kill -TERM $$       
-#)&
 
 # Calculate Variables.
 
