@@ -1,0 +1,47 @@
+#!/bin/sh
+#DNSService file
+
+NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
+DESCRIBE="DNSService_System"
+TYPE="dnsservice"
+PORT="53"
+TXT=""
+
+
+start()
+{
+	echo "Start $NAME"
+	avahi-ps publish $DESCRIBE $TYPE $PORT
+}
+
+stop()
+{
+	echo "Stop $NAME"
+	avahi-ps unpublish $DESCRIBE $TYPE $PORT
+}
+
+check()
+{
+	echo "Check $NAME"
+	return 0
+}
+
+case "$1" in
+  start)
+    start
+  ;;
+  stop)
+    stop
+  ;;
+  check)
+    if check 
+    	then
+    	start
+    fi
+  ;;
+  *)
+    exit 1
+  ;;
+esac
+
+exit 0

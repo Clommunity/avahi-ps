@@ -1,0 +1,47 @@
+#!/bin/sh
+# Proxy3 file
+
+NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
+DESCRIBE="Proxy3_System"
+TYPE="proxy3"
+PORT="3128"
+TXT='Federated=Yes'
+
+
+start()
+{
+	echo "Start $NAME"
+	avahi-ps publish $DESCRIBE $TYPE $PORT "$TXT"
+}
+
+stop()
+{
+	echo "Stop $NAME"
+	avahi-ps unpublish $DESCRIBE $TYPE $PORT "$TXT"
+}
+
+check()
+{
+	echo "Check $NAME"
+	return 0
+}
+
+case "$1" in
+  start)
+    start
+  ;;
+  stop)
+    stop
+  ;;
+  check)
+    if check 
+    	then
+    	start
+    fi
+  ;;
+  *)
+    exit 1
+  ;;
+esac
+
+exit 0

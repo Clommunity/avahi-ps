@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# Llistar serveis exitents
+
+ENDIS_FLAG="disable"
+
+filepath(){
+	local _dir
+	_dir=$(dirname $0)
+	echo $(cd $_dir;pwd)
+}
+
+FILE_PATH=$(filepath)
+INSTALL_PATH="/usr/sbin"
+INSTALL_PLUG_PATH="/usr/share/services"
+if [ "$FILE_PATH" == "$INSTALL_PATH" ]
+then
+	FILE_PATH="$INSTALL_PLUG_PATH"	
+fi
+SVRS_DIR="$FILE_PATH/files"
+
+checkall()
+{
+	for i in $(ls $SVRS_DIR/*.service)
+	do
+		/bin/sh $i check
+	done
+}
+
+case "$1" in
+  start)
+    if [ $# -eq 1 ];
+    	then
+    	checkall
+    else
+    	[ -f $SVRS_DIR/$2.service ] && /bin/sh $SVRS_DIR/$2.service check
+    fi
+  ;;
+  disable)
+	[ $# -lt 2 ] && exit 1
+    [ -f $SVRS_DIR/$2.service ] && mv $SVRS_DIR/$2.service $SVRS_DIR/$2.service.$ENDIS_FLAG 
+  ;;
+  enable)
+	[ $# -lt 2 ] && exit 1
+    [ -f $SVRS_DIR/$2.service.$ENDIS_FLAG ] && mv $SVRS_DIR/$2.service.$ENDIS_FLAG $SVRS_DIR/$2.service
+  ;;
+  *)
+    checkall
+  ;;
+esac
+
+exit 0
