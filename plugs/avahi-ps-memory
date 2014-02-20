@@ -1,5 +1,6 @@
 #!/bin/bash
-# 
+#
+TIMEOUT=5 
 
 add_host(){
 
@@ -53,7 +54,7 @@ rem_service(){
 # Find 
 find_(){
 
-	avahi-browse -aktrp|grep -e "=;$DEVICE_NAME;IPv4;.*;$1;.*;$2"|awk -F ";" '{print $5";"$4";"$7";"$8";"$9";"$10}'
+	timeout $TIMEOUT avahi-browse -aktrp|grep -e "=;$DEVICE_NAME;IPv4;.*;$1;.*;$2"|awk -F ";" '{print $5";"$4";"$7";"$8";"$9";"$10}'
 
 }
 
