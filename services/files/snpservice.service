@@ -6,7 +6,7 @@ DESCRIBE="SNPService_System"
 TYPE="snpservice"
 PORT="80"
 TXT=""
-
+CONFIG_FILE="/etc/snpservices/config.php"
 
 start()
 {
@@ -22,6 +22,12 @@ stop()
 
 check()
 {
+  # Exist config file
+  [ ! -f $CONFIG_FILE ] && return 1
+
+  # Esta actiu el dns al port XX
+  netstat -nlt|grep ":$PORT"|grep -q LISTEN || return 1
+  
 	echo "Check $NAME"
 	return 0
 }

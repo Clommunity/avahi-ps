@@ -6,7 +6,7 @@ DESCRIBE="Proxy3_System"
 TYPE="proxy3"
 PORT="3128"
 TXT='Federated=Yes'
-
+CONFIG_FILE="/etc/guifi-proxy3/config.sh"
 
 start()
 {
@@ -22,6 +22,15 @@ stop()
 
 check()
 {
+    # Exist config file 
+  [ ! -f $CONFIG_FILE ] && return 1
+
+  # Esta actiu el dns al port XX
+  netstat -nlt|grep ":$PORT"|grep -q LISTEN || return 1
+ 
+  # Fer un curl al proxy?
+  #curl  --connect-timeout 5 --max-time 5 -sL -w "%{http_code}\\n" "http://localhost:3128/errorpage" -o /dev/null
+  
 	echo "Check $NAME"
 	return 0
 }
