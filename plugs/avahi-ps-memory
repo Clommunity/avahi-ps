@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-TIMEOUT=5 
+TIMEOUT=10
 
 add_host(){
 
