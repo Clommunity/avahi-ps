@@ -15,8 +15,11 @@ avahi-ps-help(){
 	echo "		<type>: Service type."
 	echo "		<port>: Service port."
 	echo "		<txt>: Other information, format 'attibute1=value1&attribute2=value2&...&attributeN=valueN'. "
-
+	echo 
 	echo "Use: $0 search [type] [hostname]"
+	echo
+	echo "Use: $0 unpublish [type] [port]"
+	echo 
 	exit
 
 }

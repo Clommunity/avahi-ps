@@ -17,7 +17,7 @@ start()
 stop()
 {
 	echo "Stop $NAME"
-	avahi-ps unpublish $DESCRIBE $TYPE $PORT "$TXT"
+	avahi-ps unpublish $TYPE $PORT
 }
 
 check()

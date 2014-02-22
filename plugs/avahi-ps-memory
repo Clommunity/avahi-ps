@@ -16,7 +16,7 @@ rem_host(){
 	
 		local _PROCES
 
-		_PROCES=$(ps faux| grep "avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP}"|grep -v grep|awk '{print $2}')
+		_PROCES=$(ps fuax| grep "avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP}"|grep -v grep|awk '{print $2}')
 		[ ! -z "$_PROCES" ] && kill -9 $_PROCES
 
 }
@@ -27,7 +27,10 @@ add_service(){
 
 	_TXT=$(echo "$4"|tr "&" " ")
 
-	avahi-publish-service -H ${NODENAME}.${CLOUD_NAME}.local $1 $2 $3 $_TXT 2> /dev/null &
+	if [ $(ps fax| grep "avahi-publish-service -H ${NODENAME}.${CLOUD_NAME}.local"|grep "$2 $3"|grep -v grep|wc -l) -eq 0 ]
+		then
+		avahi-publish-service -H ${NODENAME}.${CLOUD_NAME}.local $1 $2 $3 $_TXT 2> /dev/null &
+	fi
 
 	save_service ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP} $1 $2 $3 $_TXT 
 }
@@ -37,9 +40,10 @@ rem_service(){
 	local _PROCES
 	local i
 
-	_PROCES=$(ps fuax |grep avahi-publish-service|grep -v grep|grep $1|awk '{print $2}')
 
-	for i in $_PROCES;
+	_PROCES=$(ps fuax |grep avahi-publish-service|grep -v grep|grep "$1 $2"|awk '{print $2}')
+
+	for i in $_PROCES
 	do 
 		kill -9 $i
 	done
@@ -80,13 +84,17 @@ publish_service() {
 
 unpublish_service(){
 	local _TYPE
-	if [ $# -lt 1 ]
+	local _PORT
+
+	if [ $# -lt 2 ]
 	then
 		avahi-ps-help
 	fi
-
-	rem_service $1 
+	_TYPE="_$1._tcp"
+	_PORT=$2
+	rem_service $_TYPE $_PORT 
 }
+
 search_service(){
 
 	local _SERVICE
