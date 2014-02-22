@@ -27,22 +27,29 @@ todoall()
 		/bin/sh $i $1
 	done
 }
-listservices()
+listservicesenable()
 {
-  echo -n "Services Enabled:"
   for i in $(ls $SVRS_DIR/*.service 2> /dev/null)
   do
-    echo -n " $(basename $i|sed -n 's/\(.*\)\.service/\1/p')"
-  done 
-  echo ""
-  echo -n "Services Disabled:"
+    echo -n "$(basename $i|sed -n 's/\(.*\)\.service/\1/p') "
+  done   
+  echo 
+}
+listservicesdisable()
+{
   for i in $(ls $SVRS_DIR/*.service.$ENDIS_FLAG  2> /dev/null)
   do
-    echo -n " $(basename $i|sed -n 's/\(.*\)\.service\..*/\1/p')"
+    echo -n "$(basename $i|sed -n 's/\(.*\)\.service\..*/\1/p') "
   done 
-  echo ""
+  echo
 }
-
+listservices()
+{
+  echo -n "Services Enabled: "
+  listservicesenable
+  echo -n "Services Disabled: "
+  listservicesdisable
+}
 case "$1" in
   start)
     if [ $# -eq 1 ];
@@ -69,7 +76,22 @@ case "$1" in
     [ -f $SVRS_DIR/$2.service.$ENDIS_FLAG ] && mv $SVRS_DIR/$2.service.$ENDIS_FLAG $SVRS_DIR/$2.service
   ;;
   list)
-      listservices
+      if [ $# -lt 2 ];
+        then
+        listservices
+      else
+         case "$2" in
+          enable)
+            listservicesenable
+          ;;
+          disable)
+            listservicesdisable
+          ;;
+          *)
+            listservices
+          ;;
+        esac
+      fi
   ;;
   *)
     echo "Usage: $0 {start|stop|disable|enable|list}"
