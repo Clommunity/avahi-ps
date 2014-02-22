@@ -1,6 +1,7 @@
 #!/bin/sh
 #TINCVPN file
 
+PROGRAM=/usr/sbin/avahi-ps
 NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
 DESCRIBE="TincVPN_System"
 TYPE="tincvpn"
@@ -11,13 +12,13 @@ TXT=""
 start()
 {
 	echo "Start $NAME"
-	avahi-ps publish $DESCRIBE $TYPE $PORT
+	$PROGRAM publish $DESCRIBE $TYPE $PORT
 }
 
 stop()
 {
 	echo "Stop $NAME"
-	avahi-ps unpublish $TYPE $PORT
+	$PROGRAM unpublish $TYPE $PORT
 }
 
 check()

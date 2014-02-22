@@ -1,6 +1,7 @@
 #!/bin/sh
 #DNSService file
 
+PROGRAM=/usr/sbin/avahi-ps
 NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
 DESCRIBE="DNSService_System"
 TYPE="dnsservice"
@@ -12,13 +13,13 @@ CONFIG_FILE="/etc/dnsservices/config.php"
 start()
 {
 	echo "Start $NAME"
-	avahi-ps publish $DESCRIBE $TYPE $PORT
+	$PROGRAM publish $DESCRIBE $TYPE $PORT
 }
 
 stop()
 {
 	echo "Stop $NAME"
-	avahi-ps unpublish $TYPE $PORT
+	$PROGRAM unpublish $TYPE $PORT
 }
 
 check()

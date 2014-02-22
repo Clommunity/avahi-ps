@@ -1,6 +1,7 @@
 #!/bin/sh
 # Proxy3 file
 
+PROGRAM=/usr/sbin/avahi-ps
 NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
 DESCRIBE="Proxy3_System"
 TYPE="proxy3"
@@ -11,13 +12,13 @@ CONFIG_FILE="/etc/guifi-proxy3/config.sh"
 start()
 {
 	echo "Start $NAME"
-	avahi-ps publish $DESCRIBE $TYPE $PORT "$TXT"
+	$PROGRAM publish $DESCRIBE $TYPE $PORT "$TXT"
 }
 
 stop()
 {
 	echo "Stop $NAME"
-	avahi-ps unpublish $TYPE $PORT
+	$PROGRAM unpublish $TYPE $PORT
 }
 
 check()
