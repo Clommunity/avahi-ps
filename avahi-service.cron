@@ -1,0 +1,5 @@
+# avahi-service.cron
+#
+# Regular cron jobs for avahi-service 
+#
+*/10 *  * * *   root    [ -x /usr/sbin/avahi-service ] && /usr/sbin/avahi-service start > /tmp/avahi-service.log 2>&1
