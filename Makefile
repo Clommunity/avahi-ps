@@ -12,7 +12,7 @@ install:
 	install -m 0755 services/avahi-service $(INSTALLDIR)/usr/sbin	
 	install -m 0644 plugs/* $(INSTALLDIR)/usr/share/avahi-ps/plugs/
 	install -m 0644 services/files/* $(INSTALLDIR)/usr/share/avahi-service/files/
-	install -m 0755 avahi-service.cron $(INSTALLDIR)/etc/cron.d/
+	install -m 0755 avahi-service.cron $(INSTALLDIR)/etc/cron.d/avahi-service
 
 uninstall:
 	rm -rf $(INSTALLDIR)/usr/share/avahi-ps
