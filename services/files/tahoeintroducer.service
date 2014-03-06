@@ -5,15 +5,15 @@ PROGRAM=/usr/sbin/avahi-ps
 NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
 DESCRIBE="Tahoe_Introducer"
 TYPE="tahoeintro"
-PID_FILE="/var/lib/tahoe-lafs/introducer/twisted.pid"
+PID_FILE="/var/lib/tahoe-lafs/introducer/twistd.pid"
 PORT=$(cat /var/lib/tahoe-lafs/introducer/introducer.port)
-TXT="furl=$(cat /var/lib/tahoe-lafs/introducer/introducer.furl)"
+TXT="furl=$(cat /var/lib/tahoe-lafs/introducer/introducer.furl | sed 's/,127\.0\.0\.1:.*\//\//')"
 
 
 start()
 {
 	echo "Start $NAME"
-	$PROGRAM publish $DESCRIBE $TYPE $PORT
+	$PROGRAM publish $DESCRIBE $TYPE $PORT $TXT
 }
 
 stop()
@@ -28,7 +28,7 @@ check()
   [ ! -f $PID_FILE ] && return 1
 
   # ps
-  ps -p $PID_FILE > /dev/null
+  ps -p $(cat $PID_FILE) > /dev/null
 
   # Esta actiu el port XX
   netstat -anlt | grep $PORT | grep -q LISTEN  || return 1
