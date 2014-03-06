@@ -1,0 +1,58 @@
+#!/bin/sh
+#TAHOE file
+
+PROGRAM=/usr/sbin/avahi-ps
+NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
+DESCRIBE="Tahoe_Introducer"
+TYPE="tahoeintro"
+PID_FILE="/var/lib/tahoe-lafs/introducer/twisted.pid"
+PORT=$(cat /var/lib/tahoe-lafs/introducer/introducer.port)
+TXT="furl=$(cat /var/lib/tahoe-lafs/introducer/introducer.furl)"
+
+
+start()
+{
+	echo "Start $NAME"
+	$PROGRAM publish $DESCRIBE $TYPE $PORT
+}
+
+stop()
+{
+	echo "Stop $NAME"
+	$PROGRAM unpublish $TYPE $PORT
+}
+
+check()
+{
+  # Exist config file
+  [ ! -f $PID_FILE ] && return 1
+
+  # ps
+  ps -p $PID_FILE > /dev/null
+
+  # Esta actiu el port XX
+  netstat -anlt | grep $PORT | grep -q LISTEN  || return 1
+  
+  echo "Check $NAME"
+  return 0
+}
+
+case "$1" in
+  start)
+    start
+  ;;
+  stop)
+    stop
+  ;;
+  check)
+    if check 
+    	then
+    	start
+    fi
+  ;;
+  *)
+    exit 1
+  ;;
+esac
+
+exit 0
