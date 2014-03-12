@@ -9,7 +9,7 @@ PID_FILE="/var/lib/tahoe-lafs/introducer/twistd.pid"
 GRID_NAME_FILE="/var/lib/tahoe-lafs/introducer/grid.name"
 INTRODUCER_PUBLIC_FILE="/var/lib/tahoe-lafs/introducer/introducer.public"
 PORT=$(cat /var/lib/tahoe-lafs/introducer/introducer.port)
-TXT="furl=$(cat /var/lib/tahoe-lafs/introducer/introducer.furl | sed 's/,127\.0\.0\.1:.*\//\//') | sed 's/,192\.168\.*\.*:.*\//\//')"
+TXT=$(cat /var/lib/tahoe-lafs/introducer/my_nodeid)
 
 start()
 {
