@@ -3,35 +3,45 @@
 
 PROGRAM=/usr/sbin/avahi-ps
 NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
-DESCRIBE="Tahoe_Introducer"
-TYPE="tahoeintro"
+DESCRIPTION="Tahoe-LAFS-Grid"
+TYPE="tahoe-lafs"
 PID_FILE="/var/lib/tahoe-lafs/introducer/twistd.pid"
+GRID_NAME_FILE="/var/lib/tahoe-lafs/introducer/grid.name"
+INTRODUCER_PUBLIC_FILE="/var/lib/tahoe-lafs/introducer/introducer.public"
 PORT=$(cat /var/lib/tahoe-lafs/introducer/introducer.port)
 TXT="furl=$(cat /var/lib/tahoe-lafs/introducer/introducer.furl | sed 's/,127\.0\.0\.1:.*\//\//')"
 
 
 start()
 {
-	echo "Start $NAME"
-	$PROGRAM publish $DESCRIBE $TYPE $PORT $TXT
+        echo "Start $NAME"
+
+        if [ -f $GRID_NAME_FILE ] ; then
+                DESCRIPTION=$(cat $GRID_NAME_FILE)
+        fi
+
+        $PROGRAM publish $DESCRIPTION $TYPE $PORT $TXT
 }
 
 stop()
 {
-	echo "Stop $NAME"
-	$PROGRAM unpublish $TYPE $PORT
+        echo "Stop $NAME"
+        $PROGRAM unpublish $TYPE $PORT
 }
 
 check()
 {
-  # Exist config file
+  # Check for PID file
   [ ! -f $PID_FILE ] && return 1
 
-  # ps
+  # Check por process
   ps -p $(cat $PID_FILE) > /dev/null
 
-  # Esta actiu el port XX
+  # Check port
   netstat -anlt | grep $PORT | grep -q LISTEN  || return 1
+  
+	#Check if public
+  [ ! -f $INTRODUCER_PUBLIC_FILE ] && return 1
   
   echo "Check $NAME"
   return 0
