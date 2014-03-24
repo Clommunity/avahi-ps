@@ -32,7 +32,6 @@ check()
   # Fer un curl al proxy?
   #curl  --connect-timeout 5 --max-time 5 -sL -w "%{http_code}\\n" "http://localhost:3128/errorpage" -o /dev/null
   
-	echo "Check $NAME"
 	return 0
 }
 
@@ -48,6 +47,10 @@ case "$1" in
     	then
     	start
     fi
+  ;;
+  isActive)
+    echo "$PROGRAM      "
+    check && (echo "UP"; exit 0) || (echo "DOWN";exit 1)
   ;;
   *)
     exit 1

@@ -75,6 +75,14 @@ case "$1" in
     [ $# -lt 2 ] && echo "enable: Need specify service what you want to enable." && exit 1
     [ -f $SVRS_DIR/$2.service.$ENDIS_FLAG ] && mv $SVRS_DIR/$2.service.$ENDIS_FLAG $SVRS_DIR/$2.service
   ;;
+  isActive)
+    if [ $# -eq 1 ];
+        then
+        todoall isActive
+    else
+        [ -f $SVRS_DIR/$2.service ] && /bin/sh $SVRS_DIR/$2.service isActive
+    fi
+  ;;
   list)
       if [ $# -lt 2 ];
         then

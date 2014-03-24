@@ -23,7 +23,6 @@ stop()
 
 check()
 {
-	echo "Check $NAME"
 	return 0
 }
 
@@ -39,6 +38,10 @@ case "$1" in
     	then
     	start
     fi
+  ;;
+  isActive)
+    echo "$PROGRAM      "
+    check && (echo "UP"; exit 0) || (echo "DOWN";exit 1)
   ;;
   *)
     exit 1

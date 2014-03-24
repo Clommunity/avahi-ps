@@ -32,8 +32,6 @@ check()
 
   # Fer una consulta dig ? ( dig IP @127.0.0.1)
 
-  
-	echo "Check $NAME"
 	return 0
 }
 
@@ -51,6 +49,10 @@ case "$1" in
     else
       stop
     fi
+  ;;
+  isActive)
+    echo "$PROGRAM      "
+    check && (echo "UP"; exit 0) || (echo "DOWN";exit 1)
   ;;
   *)
     exit 1
