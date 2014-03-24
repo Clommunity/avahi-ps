@@ -46,7 +46,7 @@ case "$1" in
     fi
   ;;
   isActive)
-    echo "$PROGRAM      "
+    echo -n "$NAME "
     check && (echo "UP"; exit 0) || (echo "DOWN";exit 1)
   ;;
   *)
