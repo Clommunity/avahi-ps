@@ -1,6 +1,8 @@
 #!/bin/sh
 #TAHOE file
 
+TAHOE_PATH=/var/lib/tahoe-lafs
+INTRODUCER_DIR=introducer
 PROGRAM=/usr/sbin/avahi-ps
 NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
 DESCRIPTION="Tahoe-LAFS-Grid"
@@ -8,8 +10,9 @@ TYPE="tahoe-lafs"
 PID_FILE="/var/lib/tahoe-lafs/introducer/twistd.pid"
 GRID_NAME_FILE="/var/lib/tahoe-lafs/introducer/grid.name"
 INTRODUCER_PUBLIC_FILE="/var/lib/tahoe-lafs/introducer/introducer.public"
-PORT=$(cat /var/lib/tahoe-lafs/introducer/introducer.port)
-TXT=$(cat /var/lib/tahoe-lafs/introducer/my_nodeid)
+PORT=0
+TXT=""
+
 
 start()
 {
@@ -30,6 +33,13 @@ stop()
 
 check()
 {
+  # Test directorys and files
+  [ ! -d "$TAHOE_PATH" ] && return 2
+  [ ! -d "$TAHOE_PATH/$INTRODUCER_DIR" ] && return 2
+  [ ! -f "$TAHOE_PATH/$INTRODUCER_DIR/introducer.port" ] && return 2 || PORT=$(cat /var/lib/tahoe-lafs/introducer/introducer.port)
+  [ ! -f "$TAHOE_PATH/$INTRODUCER_DIR/my_nodeid" ] && return 2 || TXT=$(cat /var/lib/tahoe-lafs/introducer/my_nodeid)
+
+
   # Check for PID file
   [ ! -f $PID_FILE ] && return 1
 
@@ -53,10 +63,13 @@ case "$1" in
     stop
   ;;
   check)
-    if check
-    	then
-    	start
-    fi
+    check; c=$?
+    case $c in 
+      0) start
+      ;;
+      1) stop
+      ;;
+    esac
   ;;
   isActive)
     echo -n "$NAME "
