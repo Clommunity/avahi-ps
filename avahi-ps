@@ -8,7 +8,7 @@
 avahi-ps-help(){
 
 	echo "Avahi - Publish and Search: System to publish avahi services or Search existents services."
-	echo "Use: $0 publish|search|unpublish <options>"
+	echo "Use: $0 publish|search|unpublish|info <options>"
 
 	echo "Use: $0 publish <describe> <type> <port> [txt]"
 	echo "		<describe>: Text describe service."
@@ -19,6 +19,9 @@ avahi-ps-help(){
 	echo "Use: $0 search [type] [hostname]"
 	echo
 	echo "Use: $0 unpublish [type] [port]"
+	echo 
+	echo "Use: $0 info <variable>"
+	echo "          <variable>: informations ip, cloud, tincdev, communitydev."
 	echo 
 	exit
 
@@ -117,6 +120,19 @@ elif [ "$1" == "unpublish" ]
 	then
 		shift
 		unpublish_service $@	
+
+elif [ "$1" == "info" ]
+	then
+		case $2	in
+			"ip")
+				echo $PUBLIC_IP;;
+			"cloud")
+				echo $CLOUD_NAME;;
+			"tincdev")
+				echo $DEVICE_NAME;;
+			"communitydev")
+				echo $PUBLIC_DEVICE;;
+		esac	
 fi
 
 
