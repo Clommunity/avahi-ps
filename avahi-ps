@@ -27,8 +27,8 @@ EOF
 }
 
 err() {
-    echo ERROR: "$@"
-    exit 1
+	echo ERROR: "$@"
+	exit 1
 }
 
 filepath() {
@@ -66,10 +66,8 @@ then
 	PUBLIC_DEVICE="${INTERNAL_DEV}"
 fi
 
-PUBLIC_IP=$(ip addr show dev $PUBLIC_DEVICE|grep "inet "|awk '{print $2}'|awk -F "/" {'print $1'})
 FILENAME="avahi-ps-"
 #NODENAME=$(uname -n)
-# PUBLIC_IP=$(ifconfig $PUBLIC_DEVICE|grep "inet "|awk '{print $2}'|awk -F ":" '{print $2}')
 
 PLUG_DIR="$FILE_PATH/plugs/"
 load_plug() {
@@ -109,7 +107,8 @@ elif [[ $1 == info ]]
 then
 	case $2	in
 		"ip")
-			echo "$PUBLIC_IP"
+			ip addr show dev $PUBLIC_DEVICE | grep "inet " | awk '{print $2}' | awk -F "/" {'print $1'}
+			#ifconfig $PUBLIC_DEVICE | grep "inet " | awk '{print $2}' | awk -F ":" '{print $2}'
 			;;
 		"cloud")
 			echo "$CLOUD_NAME"
