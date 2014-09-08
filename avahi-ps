@@ -1,28 +1,28 @@
 #!/bin/bash
-# 
-# avahi-ps: Avahi Publicar i Buscar - 
+#
+# avahi-ps: Avahi Publicar i Buscar -
 # Amb aquest script podem buscar i configurar els serveis que trovem per avahi.
 # També podem publicar nous serveis.
 
 # General functions
-avahi-ps-help(){
+avahi-ps-help() {
+	cat <<EOF
+Avahi - Publish and Search: System to publish avahi services or Search existents services.
+Use: $0 publish|search|unpublish|info <options>
 
-	echo "Avahi - Publish and Search: System to publish avahi services or Search existents services."
-	echo "Use: $0 publish|search|unpublish|info <options>"
+Use: $0 publish <describe> <type> <port> [txt]
+       <describe>: Text describe service.
+       <type>: Service type.
+       <port>: Service port.
+       <txt>: Other information, format 'attibute1=value1&attribute2=value2&...&attributeN=valueN'.
 
-	echo "Use: $0 publish <describe> <type> <port> [txt]"
-	echo "		<describe>: Text describe service."
-	echo "		<type>: Service type."
-	echo "		<port>: Service port."
-	echo "		<txt>: Other information, format 'attibute1=value1&attribute2=value2&...&attributeN=valueN'. "
-	echo 
-	echo "Use: $0 search [type] [hostname]"
-	echo
-	echo "Use: $0 unpublish [type] [port]"
-	echo 
-	echo "Use: $0 info <variable>"
-	echo "          <variable>: informations ip, cloud, tincdev, communitydev."
-	echo 
+Use: $0 search [type] [hostname]
+
+Use: $0 unpublish [type] [port]
+
+Use: $0 info <variable>
+       <variable>: informations ip, cloud, tincdev, communitydev.
+EOF
 	exit
 
 }
@@ -33,13 +33,12 @@ filepath(){
 }
 
 # Start program
-
 if [ $# -lt 1 ]
 then
 	avahi-ps-help
 fi
 
-# Variables 
+# Variables
 FILE_PATH=$(filepath)
 INSTALL_PATH="/usr/sbin"
 INSTALL_PLUG_PATH="/usr/share/avahi-ps"
@@ -80,7 +79,7 @@ NODENAME=$(uname -n)
 if [ ! -f ${PLUG_DIR}${FILENAME}${ERRORS_PLUG} ]
 then
 	echo "Error, don't exist '${PLUG_DIR}${FILENAME}${ERRORS_PLUG}' plugs."
-	exit 
+	exit
 fi
 . ${PLUG_DIR}${FILENAME}${ERRORS_PLUG}
 
@@ -88,7 +87,7 @@ fi
 if [ ! -f ${PLUG_DIR}${FILENAME}${EXECUTE_IN} ]
 then
 	echo "Error, don't exist '${PLUG_DIR}${FILENAME}${EXECUTE_IN}' plugs."
-	exit 
+	exit
 fi
 . ${PLUG_DIR}${FILENAME}${EXECUTE_IN}
 
@@ -101,7 +100,7 @@ fi
 if [ ! -f ${PLUG_DIR}${FILENAME}${DATABASE} ]
 then
 	echo "Error, don't exist '${PLUG_DIR}${FILENAME}${DATABASE}' plugs."
-	exit 
+	exit
 fi
 . ${PLUG_DIR}${FILENAME}${DATABASE}
 
@@ -134,5 +133,4 @@ elif [ "$1" == "info" ]
 				echo $PUBLIC_DEVICE;;
 		esac	
 fi
-
 
