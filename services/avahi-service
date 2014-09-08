@@ -2,6 +2,8 @@
 
 # avaservice: Gestor de tots els serveis
 
+shopt -s nullglob
+
 err() {
 	echo ERROR: "$@"
 	exit 1
@@ -25,24 +27,24 @@ SVRS_DIR="$FILE_PATH/files"
 
 todoall() {
 	[ $# -lt 1 ] && return
-	for i in $(ls $SVRS_DIR/*.service)
+	for i in $SVRS_DIR/*.service
 	do
 		/bin/sh $i $1
 	done
 }
 
 listservicesenable() {
-	for i in $(ls $SVRS_DIR/*.service 2> /dev/null)
+	for i in $SVRS_DIR/*.service
 	do
-		echo -n "$(basename $i|sed -n 's/\(.*\)\.service/\1/p') "
+		echo -n "$(basename $i | sed -n 's/\(.*\)\.service/\1/p') "
 	done
 	echo
 }
 
 listservicesdisable() {
-	for i in $(ls $SVRS_DIR/*.service.$ENDIS_FLAG  2> /dev/null)
+	for i in $SVRS_DIR/*.service.$ENDIS_FLAG
 	do
-		echo -n "$(basename $i|sed -n 's/\(.*\)\.service\..*/\1/p') "
+		echo -n "$(basename $i | sed -n 's/\(.*\)\.service\..*/\1/p') "
 	done
 	echo
 }
