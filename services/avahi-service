@@ -19,96 +19,96 @@ INSTALL_PATH="/usr/sbin"
 INSTALL_PLUG_PATH="/usr/share/avahi-service"
 if [ "$FILE_PATH" = "$INSTALL_PATH" ]
 then
-	FILE_PATH="$INSTALL_PLUG_PATH"	
+	FILE_PATH="$INSTALL_PLUG_PATH"
 fi
 SVRS_DIR="$FILE_PATH/files"
 
-todoall()
-{
-  [ $# -lt 1 ] && return
+todoall() {
+	[ $# -lt 1 ] && return
 	for i in $(ls $SVRS_DIR/*.service)
 	do
 		/bin/sh $i $1
 	done
 }
-listservicesenable()
-{
-  for i in $(ls $SVRS_DIR/*.service 2> /dev/null)
-  do
-    echo -n "$(basename $i|sed -n 's/\(.*\)\.service/\1/p') "
-  done   
-  echo 
+
+listservicesenable() {
+	for i in $(ls $SVRS_DIR/*.service 2> /dev/null)
+	do
+		echo -n "$(basename $i|sed -n 's/\(.*\)\.service/\1/p') "
+	done
+	echo
 }
-listservicesdisable()
-{
-  for i in $(ls $SVRS_DIR/*.service.$ENDIS_FLAG  2> /dev/null)
-  do
-    echo -n "$(basename $i|sed -n 's/\(.*\)\.service\..*/\1/p') "
-  done 
-  echo
+
+listservicesdisable() {
+	for i in $(ls $SVRS_DIR/*.service.$ENDIS_FLAG  2> /dev/null)
+	do
+		echo -n "$(basename $i|sed -n 's/\(.*\)\.service\..*/\1/p') "
+	done
+	echo
 }
-listservices()
-{
-  echo -n "Services Enabled: "
-  listservicesenable
-  echo -n "Services Disabled: "
-  listservicesdisable
+
+listservices() {
+	echo -n "Services Enabled: "
+	listservicesenable
+	echo -n "Services Disabled: "
+	listservicesdisable
 }
+
 case "$1" in
-  start)
-    if [ $# -eq 1 ];
-    	then
-    	todoall check
-    else
-    	[ -f $SVRS_DIR/$2.service ] && /bin/sh $SVRS_DIR/$2.service check
-    fi
-  ;;
-  stop)
-  if [ $# -eq 1 ];
-      then
-      todoall stop
-    else
-      [ -f $SVRS_DIR/$2.service ] && /bin/sh $SVRS_DIR/$2.service stop
-    fi
-  ;; 
-  disable)
-    [ $# -lt 2 ] && echo "disable: Need specify service what you want to disable." && exit 1
-    [ -f $SVRS_DIR/$2.service ] && mv $SVRS_DIR/$2.service $SVRS_DIR/$2.service.$ENDIS_FLAG 
-  ;;
-  enable)
-    [ $# -lt 2 ] && echo "enable: Need specify service what you want to enable." && exit 1
-    [ -f $SVRS_DIR/$2.service.$ENDIS_FLAG ] && mv $SVRS_DIR/$2.service.$ENDIS_FLAG $SVRS_DIR/$2.service
-  ;;
-  isActive)
-    if [ $# -eq 1 ];
-        then
-        todoall isActive
-    else
-        [ -f $SVRS_DIR/$2.service ] && /bin/sh $SVRS_DIR/$2.service isActive
-    fi
-  ;;
-  list)
-      if [ $# -lt 2 ];
-        then
-        listservices
-      else
-         case "$2" in
-          enable)
-            listservicesenable
-          ;;
-          disable)
-            listservicesdisable
-          ;;
-          *)
-            listservices
-          ;;
-        esac
-      fi
-  ;;
-  *)
-    echo "Usage: $0 {start|stop|disable|enable|list}"
-    exit 1
-  ;;
+	start)
+		if [ $# -eq 1 ]
+		then
+			todoall check
+		else
+			[ -f $SVRS_DIR/$2.service ] && /bin/sh $SVRS_DIR/$2.service check
+		fi
+		;;
+	stop)
+		if [ $# -eq 1 ]
+		then
+			todoall stop
+		else
+			[ -f $SVRS_DIR/$2.service ] && /bin/sh $SVRS_DIR/$2.service stop
+		fi
+		;;
+	disable)
+		[ $# -lt 2 ] && echo "disable: Need specify service what you want to disable." && exit 1
+		[ -f $SVRS_DIR/$2.service ] && mv $SVRS_DIR/$2.service $SVRS_DIR/$2.service.$ENDIS_FLAG
+		;;
+	enable)
+		[ $# -lt 2 ] && echo "enable: Need specify service what you want to enable." && exit 1
+		[ -f $SVRS_DIR/$2.service.$ENDIS_FLAG ] && mv $SVRS_DIR/$2.service.$ENDIS_FLAG $SVRS_DIR/$2.service
+		;;
+	isActive)
+		if [ $# -eq 1 ]
+		then
+			todoall isActive
+		else
+			[ -f $SVRS_DIR/$2.service ] && /bin/sh $SVRS_DIR/$2.service isActive
+		fi
+		;;
+	list)
+		if [ $# -lt 2 ]
+		then
+			listservices
+		else
+			case "$2" in
+				enable)
+					listservicesenable
+					;;
+				disable)
+					listservicesdisable
+					;;
+				*)
+					listservices
+					;;
+			esac
+		fi
+		;;
+	*)
+		echo "Usage: $0 {start|stop|disable|enable|list}"
+		exit 1
+		;;
 esac
 
 exit 0
