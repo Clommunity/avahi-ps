@@ -21,4 +21,4 @@ uninstall:
 	rm -f $(INSTALLDIR)/usr/sbin/avahi-service
 	rm -f $(INSTALLDIR)/etc/cron.d/avahi-service.cron
 
-
+.PHONY: all install uninstall
