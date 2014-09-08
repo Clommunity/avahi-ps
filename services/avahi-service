@@ -72,11 +72,11 @@ case "$1" in
 		fi
 		;;
 	disable)
-		[ $# -lt 2 ] && echo "disable: Need specify service what you want to disable." && exit 1
+		[ $# -lt 2 ] && err "disable: Specify the service you want to disable"
 		[ -f $SVRS_DIR/$2.service ] && mv $SVRS_DIR/$2.service $SVRS_DIR/$2.service.$ENDIS_FLAG
 		;;
 	enable)
-		[ $# -lt 2 ] && echo "enable: Need specify service what you want to enable." && exit 1
+		[ $# -lt 2 ] && err "enable: Specify the service you want to enable"
 		[ -f $SVRS_DIR/$2.service.$ENDIS_FLAG ] && mv $SVRS_DIR/$2.service.$ENDIS_FLAG $SVRS_DIR/$2.service
 		;;
 	isActive)
