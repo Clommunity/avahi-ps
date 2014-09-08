@@ -23,26 +23,22 @@ Use: $0 unpublish [type] [port]
 Use: $0 info <variable>
        <variable>: informations ip, cloud, tincdev, communitydev.
 EOF
-	exit
-
+	exit 0
 }
-filepath(){
-	local _dir
-	_dir=$(dirname "$0")
-	echo $(cd $_dir;pwd)
+
+filepath() {
+	local _dir="$(dirname "$0")"
+	echo $(cd "$_dir" && pwd)
 }
 
 # Start program
-if [ $# -lt 1 ]
-then
-	avahi-ps-help
-fi
+[[ $# -lt 1 ]] && avahi-ps-help
 
 # Variables
 FILE_PATH=$(filepath)
 INSTALL_PATH="/usr/sbin"
 INSTALL_PLUG_PATH="/usr/share/avahi-ps"
-if [ "$FILE_PATH" == "$INSTALL_PATH" ]
+if [[ $FILE_PATH == $INSTALL_PATH ]]
 then
 	FILE_PATH="$INSTALL_PLUG_PATH"
 fi
@@ -62,7 +58,7 @@ GETINCONF_FILE=/etc/getinconf-client.conf
 
 # Calculate Variables.
 
-if [ -f $GETINCONF_FILE ]
+if [[ -f $GETINCONF_FILE ]]
 then
 	. $GETINCONF_FILE
 	DEVICE_NAME="${NETWORK_NAME}"
@@ -76,7 +72,7 @@ NODENAME=$(uname -n)
 
 # Load plugins.
 # Errors
-if [ ! -f ${PLUG_DIR}${FILENAME}${ERRORS_PLUG} ]
+if [[ ! -f ${PLUG_DIR}${FILENAME}${ERRORS_PLUG} ]]
 then
 	echo "Error, don't exist '${PLUG_DIR}${FILENAME}${ERRORS_PLUG}' plugs."
 	exit
@@ -84,20 +80,20 @@ fi
 . ${PLUG_DIR}${FILENAME}${ERRORS_PLUG}
 
 # Execution
-if [ ! -f ${PLUG_DIR}${FILENAME}${EXECUTE_IN} ]
+if [[ ! -f ${PLUG_DIR}${FILENAME}${EXECUTE_IN} ]]
 then
 	echo "Error, don't exist '${PLUG_DIR}${FILENAME}${EXECUTE_IN}' plugs."
 	exit
 fi
 . ${PLUG_DIR}${FILENAME}${EXECUTE_IN}
 
-if [ -f ${PLUG_DIR}${FILENAME}${SAVE_SERVICE} ]
+if [[ -f ${PLUG_DIR}${FILENAME}${SAVE_SERVICE} ]]
 	then
 	. ${PLUG_DIR}${FILENAME}${SAVE_SERVICE}
 fi
 
 # Database
-if [ ! -f ${PLUG_DIR}${FILENAME}${DATABASE} ]
+if [[ ! -f ${PLUG_DIR}${FILENAME}${DATABASE} ]]
 then
 	echo "Error, don't exist '${PLUG_DIR}${FILENAME}${DATABASE}' plugs."
 	exit
@@ -105,22 +101,22 @@ fi
 . ${PLUG_DIR}${FILENAME}${DATABASE}
 
 # Publish
-if [ "$1" == "publish" ]
+if [[ $1 == publish ]]
 then
 	shift
 	publish_service "$@"
 
-elif [ "$1" == "search" ]
+elif [[ $1 == search ]]
 then
 	shift
 	search_service "$@"
 
-elif [ "$1" == "unpublish" ]
+elif [[ $1 == unpublish ]]
 then
 	shift
 	unpublish_service "$@"
 
-elif [ "$1" == "info" ]
+elif [[ $1 == info ]]
 then
 	case $2	in
 		"ip")
