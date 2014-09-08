@@ -44,7 +44,7 @@ INSTALL_PATH="/usr/sbin"
 INSTALL_PLUG_PATH="/usr/share/avahi-ps"
 if [ "$FILE_PATH" == "$INSTALL_PATH" ]
 then
-	FILE_PATH="$INSTALL_PLUG_PATH"	
+	FILE_PATH="$INSTALL_PLUG_PATH"
 fi
 PLUG_DIR="$FILE_PATH/plugs/"
 IPv="IPv4"
@@ -64,9 +64,9 @@ GETINCONF_FILE=/etc/getinconf-client.conf
 
 if [ -f $GETINCONF_FILE ]
 then
-	. $GETINCONF_FILE	
+	. $GETINCONF_FILE
 	DEVICE_NAME=${NETWORK_NAME}
-	PUBLIC_DEVICE=${INTERNAL_DEV}	
+	PUBLIC_DEVICE=${INTERNAL_DEV}
 fi
 
 PUBLIC_IP=$(ip addr show dev $PUBLIC_DEVICE|grep "inet "|awk '{print $2}'|awk -F "/" {'print $1'})
@@ -106,31 +106,31 @@ fi
 
 # Publish
 if [ "$1" == "publish" ]
-	then
-		shift
-		publish_service $@
+then
+	shift
+	publish_service $@
 
 elif [ "$1" == "search" ]
-	then
-		shift
-		search_service $@
+then
+	shift
+	search_service $@
 
 elif [ "$1" == "unpublish" ]
-	then
-		shift
-		unpublish_service $@	
+then
+	shift
+	unpublish_service $@
 
 elif [ "$1" == "info" ]
-	then
-		case $2	in
-			"ip")
-				echo $PUBLIC_IP;;
-			"cloud")
-				echo $CLOUD_NAME;;
-			"tincdev")
-				echo $DEVICE_NAME;;
-			"communitydev")
-				echo $PUBLIC_DEVICE;;
-		esac	
+then
+	case $2	in
+		"ip")
+			echo $PUBLIC_IP;;
+		"cloud")
+			echo $CLOUD_NAME;;
+		"tincdev")
+			echo $DEVICE_NAME;;
+		"communitydev")
+			echo $PUBLIC_DEVICE;;
+	esac
 fi
 
