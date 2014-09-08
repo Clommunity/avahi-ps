@@ -26,6 +26,8 @@ EOF
 	exit 0
 }
 
+[[ $# -lt 1 ]] && avahi-ps-help
+
 err() {
 	echo ERROR: "$@"
 	exit 1
@@ -36,9 +38,6 @@ filepath() {
 	echo $(cd "$_dir" && pwd)
 }
 
-# Start program
-[[ $# -lt 1 ]] && avahi-ps-help
-
 # Variables
 FILE_PATH=$(filepath)
 INSTALL_PATH="/usr/sbin"
@@ -48,14 +47,10 @@ then
 	FILE_PATH="$INSTALL_PLUG_PATH"
 fi
 
-DATABASE="none"
 PUBLIC_DEVICE="wlan0"
 CLOUD_NAME="guifi"
 #DEVICE_NAME="${CLOUD_NAME}"
 DEVICE_NAME="demo"
-EXECUTE_IN="memory"
-ERRORS_PLUG="errors"
-SAVE_SERVICE="none"
 GETINCONF_FILE=/etc/getinconf-client.conf
 
 # Calculate Variables.
@@ -75,13 +70,16 @@ load_plug() {
 	[[ -f $_plug_path ]] || err "\"$_plug_path\" doesn't exist!"
 	. "$_plug_path"
 }
-
 load_plug_if_exists() {
 	local _plug_path="${PLUG_DIR}${FILENAME}${1}"
 	[[ -f $_plug_path ]] && . "$_plug_path"
 }
 
 # Load plugins.
+ERRORS_PLUG="errors"
+EXECUTE_IN="memory"
+SAVE_SERVICE="none"
+DATABASE="none"
 load_plug "$ERRORS_PLUG"
 load_plug "$EXECUTE_IN"
 load_plug_if_exists "$SAVE_SERVICE"
