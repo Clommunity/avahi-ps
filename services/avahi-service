@@ -36,7 +36,7 @@ todoall() {
 listservicesenable() {
 	for i in $SVRS_DIR/*.service
 	do
-		echo -n "$(basename $i | sed -n 's/\(.*\)\.service/\1/p') "
+		echo -n $i | sed -n 's@.*/\([^/]*\)\.service@ \1@p'
 	done
 	echo
 }
@@ -44,15 +44,15 @@ listservicesenable() {
 listservicesdisable() {
 	for i in $SVRS_DIR/*.service.$ENDIS_FLAG
 	do
-		echo -n "$(basename $i | sed -n 's/\(.*\)\.service\..*/\1/p') "
+		echo -n $i | sed -n 's@.*/\([^/]*\)\.service\..*@ \1@p'
 	done
 	echo
 }
 
 listservices() {
-	echo -n "Services Enabled: "
+	echo -n "Services Enabled:"
 	listservicesenable
-	echo -n "Services Disabled: "
+	echo -n "Services Disabled:"
 	listservicesdisable
 }
 
