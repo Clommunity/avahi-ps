@@ -2,12 +2,16 @@
 
 # avaservice: Gestor de tots els serveis
 
+err() {
+	echo ERROR: "$@"
+	exit 1
+}
+
 ENDIS_FLAG="disable"
 
-filepath(){
-	local _dir
-	_dir=$(dirname $0)
-	echo $(cd $_dir;pwd)
+filepath() {
+	local _dir="$(dirname "$0")"
+	echo $(cd "$_dir" && pwd)
 }
 
 FILE_PATH=$(filepath)
