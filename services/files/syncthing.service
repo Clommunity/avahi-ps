@@ -1,0 +1,62 @@
+#!/bin/sh
+#Syncthing file
+
+PROGRAM=/usr/sbin/avahi-ps
+NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
+DESCRIBE="Syncthing"
+TYPE="syncthing"
+PORT="22000"
+TXT=""
+CONFIG_FILE="/etc/syncthing/config.xml"
+
+
+start()
+{
+	echo "Start $NAME"
+	$PROGRAM publish $DESCRIBE $TYPE $PORT $PUBLIC_ID
+}
+
+stop()
+{
+	echo "Stop $NAME"
+	$PROGRAM unpublish $TYPE $PORT $PUBLIC_ID
+}
+
+check()
+{
+	# Exist config file
+	[ ! -f $CONFIG_FILE ] && return 1
+
+	# Esta actiu el dns al port XX
+	netstat -nlt|grep ":$PORT"|grep -q LISTEN || return 1
+
+	# Fer una consulta dig ? ( dig IP @127.0.0.1)
+
+	return 0
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	check)
+		if check 
+		then
+			start
+		else
+			stop
+		fi
+		;;
+	isActive)
+		echo -n "$NAME "
+		check && (echo "UP"; exit 0) || (echo "DOWN";exit 1)
+		;;
+	*)
+		exit 1
+		;;
+esac
+
+exit 0
