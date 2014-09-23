@@ -62,7 +62,7 @@ then
 fi
 
 FILENAME="avahi-ps-"
-#NODENAME=$(uname -n)
+NODENAME=$(uname -n)
 
 PLUG_DIR="$FILE_PATH/plugs/"
 load_plug() {
