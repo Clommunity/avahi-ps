@@ -61,7 +61,7 @@ then
 	PUBLIC_DEVICE="${INTERNAL_DEV}"
 fi
 
-PUBLIC_IP=$(ip addr show dev $PUBLIC_DEVICE|grep "inet "|awk '{print $2}'|awk -F "/" {'print $1'})
+PUBLIC_IP=$(ip addr show dev $PUBLIC_DEVICE|grep "global $PUBLIC_DEVICE\$"|awk '{print $2}'|awk -F "/" {'print $1'})
 FILENAME="avahi-ps-"
 NODENAME=$(uname -n)
 # PUBLIC_IP=$(ifconfig $PUBLIC_DEVICE|grep "inet "|awk '{print $2}'|awk -F ":" '{print $2}')
