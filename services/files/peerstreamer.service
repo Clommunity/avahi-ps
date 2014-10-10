@@ -7,7 +7,7 @@ FILEPEERS=/var/run/pspeers.conf
 PSCONTROLLER=/var/local/cDistro/plug/resources/peerstreamer/pscontroller
 PSSHELL=/var/local/cDistro/plug/resources/peerstreamer/ps_shell
 GETINCONF_FILE=/etc/getinconf-client.conf
-DEBUG=1
+DEBUG=0
 
 start() {
 	ip=$1
@@ -27,7 +27,7 @@ stop () {
 	[ $DEBUG ] && echo "stop"
 	[ $DEBUG ] && echo "port: $port"
 	[ $DEBUG ] && echo "IP: $ip"
-	# $AVAHIPROG unpublish $TYPE $port $ip
+	$AVAHIPROG unpublish $TYPE $port $ip
 }
 
 check() {
@@ -37,46 +37,9 @@ check() {
 
 	[ $DEBUG ] && echo "Checking..."
 
-	#Running script with info option (kills zombie PS instances and related)
-	#$PSCONTROLLER info &> /dev/null		# Output not important
-	
 	$PSSHELL check		# Stop and unpublish zombie PS instances
 
 }
-
-
-# Getting Community IP address
-#if [[ -f $GETINCONF_FILE ]]
-#then
-#	. $GETINCONF_FILE
-#	DEVICE_NAME="${NETWORK_NAME}"
-#	PUBLIC_DEVICE="${INTERNAL_DEV}"
-#fi
-# 
-#PUBLIC_IP=$(ip addr show dev $PUBLIC_DEVICE|grep "global $PUBLIC_DEVICE\$"|awk '{print $2}'|awk -F "/" {'print $1'})
-#
-#
-## Stopping all instances at the very beginning
-#cat $FILEPEERS | while read line
-#do
-#	port="$(echo $line | cut -d '|' -f1)"
-#	[ $DEBUG ] && echo "port: $port"
-#	[ $DEBUG ] &&echo "- - - - - - - - -"
-#	stop $port $PUBLIC_IP
-#	[ $DEBUG ] && echo "-------------------------------------------------"
-#done
-#
-## Stopping all "frozen" or zombie PS instances
-#check
-#
-## Publishing remaining instances
-#cat $FLEPEERS | while read line
-#do
-#	port="$(echo $line | cut -d '|' -f1)"
-#	description="$(echo $line | cut -d '|' -f7)"
-#
-#	start $PUBLIC_IP $port $description
-#done
 
 case "$1" in
 	start)
@@ -95,4 +58,4 @@ case "$1" in
 		exit 1
 		;;
 esac
-exiti 0
+exit 0
