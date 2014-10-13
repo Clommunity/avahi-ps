@@ -7,8 +7,9 @@ FILEPEERS=/var/run/pspeers.conf
 PSCONTROLLER=/var/local/cDistro/plug/resources/peerstreamer/pscontroller
 PSSHELL=/var/local/cDistro/plug/resources/peerstreamer/ps_shell
 GETINCONF_FILE=/etc/getinconf-client.conf
-PUBLIC_IP=PUBLIC_IP=$($AVAHIPROG info ip)
+PUBLIC_IP=$($AVAHIPROG info ip)
 DEBUG=0
+NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
 
 start() {
 	#correr pscontroller info
@@ -33,9 +34,12 @@ start() {
 
 			$AVAHIPROG publish $description $TYPE $port $PUBLIC_IP
 		done
+		echo "Start $NAME"
+	else
+		echo "Stop $NAME"
 	fi
 
-	$AVAHIPROG publish $description $TYPE $port $ip
+	#$AVAHIPROG publish $description $TYPE $port $ip
 }
 
 stop () {
