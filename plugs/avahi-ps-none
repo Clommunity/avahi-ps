@@ -1,6 +1,41 @@
 #!/bin/bash
-# 
+#
+none_add_host(){
+# none
+return 0
+}
 
-db_add_service(){
-	echo $#
+none_rem_host(){
+# none
+return 0
+}
+
+none_add_service(){
+# none
+return 0
+}
+
+none_rem_service(){
+# none
+return 0
+}
+
+none_find_(){
+# none
+return ""
+}
+
+none_publish_service() {
+# none
+return 0
+}
+
+none_unpublish_service(){
+# none
+return 0
+}
+
+none_search_service(){
+# none
+return 0
 }

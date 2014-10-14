@@ -1,0 +1,132 @@
+#!/bin/bash
+#
+CURLPROG="/usr/bin/curl"
+TIMEOUT=2
+TTL_NODE=$(( 60*3 ))
+TTL_SERVICE=$(( 60*1 ))
+URLBASE="http://127.0.0.1:4001/v2/keys"
+HOST_ID_FILE="/etc/HostID"
+IDNUM=10
+
+calculate_hash() {
+	PORT=${1:-""}
+	[ ! -f $HOST_ID_FILE ] && cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c $IDNUM > $HOST_ID_FILE
+	echo -n $(cat $HOST_ID_FILE)${PUBLIC_IP}${PORT}|md5sum|cut -d " " -f 1
+}
+
+getREST() {
+	curl -m ${TIMEOUT} -s -o /dev/null $@ 
+}
+
+etcd_add_service(){
+
+	local _TXT
+
+	_TXT=$(echo "$4"|tr "&" " ")
+	Server=$1
+	HostID=$(calculate_hash)
+  ServerID=$(calculate_hash $3)
+
+	value='{"type":"'$1'","description":"'$2'","host":"'${NODENAME}.${CLOUD_NAME}'","ip":"'${PUBLIC_IP}'","port":"'$3'","txt":"'$_TXT'"}'
+
+	url_nodes="$URLBASE/nodes"
+
+	# Afegir un servei a un host
+	# 1. Crear un host
+	getREST -L $url_nodes/${HostID} -XPUT -d ttl=${TTL_NODE} -d dir=true
+	# 2. Crear un servei
+	getREST -L $url_nodes/${HostID}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value
+	# 3. Actualitza el ttl del servei
+	getREST -L $url_nodes/${HostID}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value -d prevExist=true
+	# 4. Actualitzar el ttl del node
+	getREST -L $url_nodes/${HostID} -XPUT -d ttl=${TTL_NODE} -d dir=true -d prevExist=true
+
+
+	url_services="$URLBASE/services"
+
+	# Afegir un host a un servei
+	# 1. Crear un host
+	getREST -L $url_services/${Server} -XPUT -d ttl=${TTL_NODE} -d dir=true
+	# 2. Crear un servei
+	getREST -L $url_services/${Server}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value
+	# 3. Actualitza el ttl del servei
+	getREST -L $url_services/${Server}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value -d prevExist=true
+	# 4. Actualitzar el ttl del node
+	getREST -L $url_services/${Server} -XPUT -d ttl=${TTL_NODE} -d dir=true -d prevExist=true
+
+}
+
+etcd_rem_service(){
+
+	HostID=$(calculate_hash)
+	Server=$1
+	url_nodes="$URLBASE/nodes"
+
+#	getREST -L $url_nodes/${HostID}/${Server} -XDELETE
+
+# Esborrar un host d'un servie
+
+# Esborrar un servei d'un host
+
+return 0
+}
+
+
+# Find 
+etcd_find_(){
+
+	url_services="$URLBASE/services"
+	curl -L $url_services/
+
+}
+
+etcd_publish_service() {
+
+	local _DESCRIBE
+	local _TYPE
+	local _PORT
+	local _TXT
+
+	if [ $# -lt 3 ]
+	then
+		avahi-ps-help
+	fi
+
+	_DESCRIBE="$1"
+	_TYPE="$2"
+	_PORT="$3"
+	_TXT=${4:-""}
+	etcd_add_service $_DESCRIBE $_TYPE $_PORT $_TXT
+}
+
+etcd_unpublish_service(){
+	local _TYPE
+	local _PORT
+
+	if [ $# -lt 2 ]
+	then
+		avahi-ps-help
+	fi
+	_TYPE="$1"
+	_PORT=$2
+	etcd_rem_service $_TYPE $_PORT 
+}
+
+etcd_search_service(){
+
+
+	local _SERVICE
+	local _HOST
+	if [ -z "$1" -o "$1" == "." ]
+	then 
+		_SERVICE=".*"
+	fi
+	if [ -z "$2" -o "$2" == "." ]
+	then
+		_HOST=".*\.$CLOUD_NAME\.local"
+	else
+		_HOST="$2\.$CLOUD_NAME\.local"
+	fi
+	etcd_find_ "$_SERVICE" "$_HOST"
+
+}

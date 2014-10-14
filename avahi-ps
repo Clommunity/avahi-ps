@@ -79,33 +79,34 @@ load_plug_if_exists() {
 
 # Load plugins.
 ERRORS_PLUG="errors"
-EXECUTE_IN="memory"
+EXECUTE_IN="none"
 SAVE_SERVICE="none"
 DATABASE="none"
+AVAHIPS_FILE=/etc/avahi-ps.conf
+if [[ -f $AVAHIPS_FILE ]]
+then
+	. $AVAHIPS_FILE
+fi
+
 load_plug "$ERRORS_PLUG"
 load_plug "$EXECUTE_IN"
 load_plug_if_exists "$SAVE_SERVICE"
 load_plug "$DATABASE"
 
 # Publish
-if [[ $1 == publish ]]
+
+action=$1
+options="publish search unpublish"
+if [[ "$options" =~ (^| )"$action"($| ) ]]
 then
 	shift
-	publish_service "$@"
-
-elif [[ $1 == search ]]
+	for tipus in ${EXECUTE_IN} ${DATABASE};
+	do
+		[ ! -z "$(typeset -f ${tipus}_${action}_service)" ] && ${tipus}_${action}_service "$@"
+	done
+elif [[ "$action" == "info" ]]
 then
-	shift
-	search_service "$@"
-
-elif [[ $1 == unpublish ]]
-then
-	shift
-	unpublish_service "$@"
-
-elif [[ $1 == info ]]
-then
-	case $2	in
+	case "$2"	in
 		"ip")
 			echo "$PUBLIC_IP"
 			;;

@@ -2,7 +2,7 @@
 #
 TIMEOUT=10
 
-add_host(){
+memory_add_host(){
 
 	# Validate if exist address node.
 	if [ $(avahi-resolve-address -n ${NODENAME}.${CLOUD_NAME}.local 2> /dev/null | grep "${PUBLIC_IP}" | wc -l) -lt 1 ]
@@ -12,7 +12,7 @@ add_host(){
 
 }
 
-rem_host(){
+memory_rem_host(){
 	
 		local _PROCES
 
@@ -21,7 +21,7 @@ rem_host(){
 
 }
 
-add_service(){
+memory_add_service(){
 
 	local _TXT
 
@@ -35,7 +35,7 @@ add_service(){
 	save_service ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP} $1 $2 $3 $_TXT 
 }
 
-rem_service(){
+memory_rem_service(){
 	
 	local _PROCES
 	local i
@@ -49,20 +49,20 @@ rem_service(){
 	done
 	if [ $(ps fuax |grep avahi-publish-service|grep -v grep| wc -l) -lt 1 ]
 	then
-		rem_host
+		memory_rem_host
 	fi
 
 }
 
 
 # Find 
-find_(){
+memory_find_(){
 
 	timeout $TIMEOUT avahi-browse -aktrp|grep -e "=;$DEVICE_NAME;IPv4;.*;$1;.*;$2"|awk -F ";" '{print $5";"$4";"$7";"$8";"$9";"$10}'
 
 }
 
-publish_service() {
+memory_publish_service() {
 
 	local _DESCRIBE
 	local _TYPE
@@ -78,11 +78,11 @@ publish_service() {
 	_TYPE="_$2._tcp"
 	_PORT=$3
 	_TXT=${4:-""}
-	add_host 
-	add_service $_DESCRIBE $_TYPE $_PORT $_TXT
+	memory_add_host 
+	memory_add_service $_DESCRIBE $_TYPE $_PORT $_TXT
 }
 
-unpublish_service(){
+memory_unpublish_service(){
 	local _TYPE
 	local _PORT
 
@@ -92,10 +92,10 @@ unpublish_service(){
 	fi
 	_TYPE="_$1._tcp"
 	_PORT=$2
-	rem_service $_TYPE $_PORT 
+	memory_rem_service $_TYPE $_PORT 
 }
 
-search_service(){
+memory_search_service(){
 
 	local _SERVICE
 	local _HOST
@@ -111,6 +111,6 @@ search_service(){
 	else
 		_HOST="$2\.$CLOUD_NAME\.local"
 	fi
-	find_ "$_SERVICE" "$_HOST"
+	memory_find_ "$_SERVICE" "$_HOST"
 
 }
