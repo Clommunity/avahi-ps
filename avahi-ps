@@ -79,7 +79,7 @@ load_plug_if_exists() {
 
 # Load plugins.
 ERRORS_PLUG="errors"
-EXECUTE_IN="none"
+EXECUTE_IN="memory"
 SAVE_SERVICE="none"
 DATABASE="none"
 AVAHIPS_FILE=/etc/avahi-ps.conf
