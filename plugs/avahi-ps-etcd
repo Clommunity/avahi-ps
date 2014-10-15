@@ -12,6 +12,7 @@ ETCD_CONFIGFILE="/etc/avahi-ps-etcd.conf"
 [[ -f $ETCD_CONFIGFILE ]] && . $ETCD_CONFIGFILE
 
 URLBASE="http://${SERVER_ETCD_BASE}/v2/keys"
+NO_RETURN="-o /dev/null"
 
 calculate_hash() {
 	PORT=${1:-""}
@@ -20,7 +21,7 @@ calculate_hash() {
 }
 
 getREST() {
-	curl -m ${TIMEOUT} -s -o /dev/null $@ 
+	curl -m ${TIMEOUT} -s $@ 
 }
 
 etcd_add_service(){
@@ -28,36 +29,36 @@ etcd_add_service(){
 	local _TXT
 
 	_TXT=$(echo "$4"|tr "&" " ")
-	Server=$1
+	Service=$2
 	HostID=$(calculate_hash)
-  ServerID=$(calculate_hash $3)
+  	ServerID=$(calculate_hash $3)
 
-	value='{"type":"'$1'","description":"'$2'","host":"'${NODENAME}.${CLOUD_NAME}.local'","ip":"'${PUBLIC_IP}'","port":"'$3'","microcloud":"'$DEVICE_NAME'","txt":"'$_TXT'"}'
+	value='{"type":"'$2'","description":"'$1'","host":"'${NODENAME}.${CLOUD_NAME}.local'","ip":"'${PUBLIC_IP}'","port":"'$3'","microcloud":"'$DEVICE_NAME'","txt":"'$_TXT'"}'
 
 	url_nodes="$URLBASE/nodes"
 
 	# Afegir un servei a un host
 	# 1. Crear un host
-	getREST -L $url_nodes/${HostID} -XPUT -d ttl=${TTL_NODE} -d dir=true
+	getREST ${NO_RETURN} -L $url_nodes/${HostID} -XPUT -d ttl=${TTL_NODE} -d dir=true
 	# 2. Crear un servei
-	getREST -L $url_nodes/${HostID}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value
+	getREST ${NO_RETURN} -L $url_nodes/${HostID}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value
 	# 3. Actualitza el ttl del servei
-	getREST -L $url_nodes/${HostID}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value -d prevExist=true
+	getREST ${NO_RETURN} -L $url_nodes/${HostID}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value -d prevExist=true
 	# 4. Actualitzar el ttl del node
-	getREST -L $url_nodes/${HostID} -XPUT -d ttl=${TTL_NODE} -d dir=true -d prevExist=true
+	getREST ${NO_RETURN} -L $url_nodes/${HostID} -XPUT -d ttl=${TTL_NODE} -d dir=true -d prevExist=true
 
 
 	url_services="$URLBASE/services"
 
 	# Afegir un host a un servei
 	# 1. Crear un host
-	getREST -L $url_services/${Server} -XPUT -d ttl=${TTL_NODE} -d dir=true
+	getREST ${NO_RETURN} -L $url_services/${Service} -XPUT -d ttl=${TTL_NODE} -d dir=true
 	# 2. Crear un servei
-	getREST -L $url_services/${Server}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value
+	getREST ${NO_RETURN} -L $url_services/${Service}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value
 	# 3. Actualitza el ttl del servei
-	getREST -L $url_services/${Server}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value -d prevExist=true
+	getREST ${NO_RETURN} -L $url_services/${Service}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value -d prevExist=true
 	# 4. Actualitzar el ttl del node
-	getREST -L $url_services/${Server} -XPUT -d ttl=${TTL_NODE} -d dir=true -d prevExist=true
+	getREST ${NO_RETURN} -L $url_services/${Service} -XPUT -d ttl=${TTL_NODE} -d dir=true -d prevExist=true
 
 }
 
@@ -80,8 +81,8 @@ return 0
 # Find 
 etcd_find_(){
 
-	url_services="$URLBASE/services"
-	curl -L $url_services/
+	url_services="$URLBASE/services?recursive=true"
+	getREST $url_services
 
 }
 
