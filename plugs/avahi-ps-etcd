@@ -2,11 +2,16 @@
 #
 CURLPROG="/usr/bin/curl"
 TIMEOUT=2
-TTL_NODE=$(( 60*3 ))
-TTL_SERVICE=$(( 60*1 ))
-URLBASE="http://127.0.0.1:4001/v2/keys"
+TTL_NODE=$(( 60*60*3 ))
+TTL_SERVICE=$(( 60*15 ))
 HOST_ID_FILE="/etc/HostID"
 IDNUM=10
+SERVER_ETCD_BASE="127.0.0.1:4001"
+ETCD_CONFIGFILE="/etc/avahi-ps-etcd.conf"
+
+[[ -f $ETCD_CONFIGFILE ]] && . $ETCD_CONFIGFILE
+
+URLBASE="http://${SERVERBASE}/v2/keys"
 
 calculate_hash() {
 	PORT=${1:-""}
