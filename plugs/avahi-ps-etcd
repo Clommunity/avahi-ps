@@ -32,7 +32,7 @@ etcd_add_service(){
 	HostID=$(calculate_hash)
   ServerID=$(calculate_hash $3)
 
-	value='{"type":"'$1'","description":"'$2'","host":"'${NODENAME}.${CLOUD_NAME}'","ip":"'${PUBLIC_IP}'","port":"'$3'","txt":"'$_TXT'"}'
+	value='{"type":"'$1'","description":"'$2'","host":"'${NODENAME}.${CLOUD_NAME}.local'","ip":"'${PUBLIC_IP}'","port":"'$3'","microcloud":"'$DEVICE_NAME'","txt":"'$_TXT'"}'
 
 	url_nodes="$URLBASE/nodes"
 
