@@ -11,7 +11,7 @@ ETCD_CONFIGFILE="/etc/avahi-ps-etcd.conf"
 
 [[ -f $ETCD_CONFIGFILE ]] && . $ETCD_CONFIGFILE
 
-URLBASE="http://${SERVERBASE}/v2/keys"
+URLBASE="http://${SERVER_ETCD_BASE}/v2/keys"
 
 calculate_hash() {
 	PORT=${1:-""}
