@@ -39,26 +39,25 @@ etcd_add_service(){
 
 	# Afegir un servei a un host
 	# 1. Crear un host
-	getREST ${NO_RETURN} -L $url_nodes/${HostID} -XPUT -d ttl=${TTL_NODE} -d dir=true
+	getREST -sL $url_nodes/${HostID} |jq -e '.errorCode' > /dev/null && PREVEXIST="" || PREVEXIST="-d prevExist=true"
+	getREST ${NO_RETURN} -L $url_nodes/${HostID} -XPUT -d ttl=${TTL_NODE} -d dir=true $PREVEXIST
+	getREST -sL $url_nodes/${HostID} |jq -e '.errorCode' > /dev/null && echo "ERROR: Host (${HostID}) did not create, maybe etcd has some problem."
+
 	# 2. Crear un servei
-	getREST ${NO_RETURN} -L $url_nodes/${HostID}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value
-	# 3. Actualitza el ttl del servei
-	getREST ${NO_RETURN} -L $url_nodes/${HostID}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value -d prevExist=true
-	# 4. Actualitzar el ttl del node
-	getREST ${NO_RETURN} -L $url_nodes/${HostID} -XPUT -d ttl=${TTL_NODE} -d dir=true -d prevExist=true
+	getREST -sL $url_nodes/${HostID}/${ServerID} |jq -e '.errorCode' > /dev/null && PREVEXIST="" || PREVEXIST="-d prevExist=true"	
+	getREST ${NO_RETURN} -L $url_nodes/${HostID}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value $PREVEXIST
+	getREST -sL $url_nodes/${HostID}/${ServerID} |jq -e '.errorCode' > /dev/null && echo "ERROR: Server (${HostID}/${ServerID}) did not create, maybe etcd has some problem."
 
 
 	url_services="$URLBASE/services"
 
 	# Afegir un host a un servei
 	# 1. Crear un host
-	getREST ${NO_RETURN} -L $url_services/${Service} -XPUT -d ttl=${TTL_NODE} -d dir=true
+	getREST -sL $url_services/${Service} |jq -e '.errorCode' > /dev/null && PREVEXIST="" || PREVEXIST="-d prevExist=true"
+	getREST ${NO_RETURN} -L $url_services/${Service} -XPUT -d ttl=${TTL_NODE} -d dir=true $PREVEXIST
 	# 2. Crear un servei
-	getREST ${NO_RETURN} -L $url_services/${Service}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value
-	# 3. Actualitza el ttl del servei
-	getREST ${NO_RETURN} -L $url_services/${Service}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value -d prevExist=true
-	# 4. Actualitzar el ttl del node
-	getREST ${NO_RETURN} -L $url_services/${Service} -XPUT -d ttl=${TTL_NODE} -d dir=true -d prevExist=true
+	getREST -sL $url_services/${Service}/${ServerID}  |jq -e '.errorCode' > /dev/null && PREVEXIST="" || PREVEXIST="-d prevExist=true"
+	getREST ${NO_RETURN} -L $url_services/${Service}/${ServerID} -XPUT -d ttl=${TTL_SERVICE} -d value=$value $PREVEXIST
 
 }
 
