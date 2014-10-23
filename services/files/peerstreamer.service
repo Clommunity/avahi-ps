@@ -30,9 +30,9 @@ start() {
 		cat $FILEPEERS | while read line
 		do
 			port=$(echo $line | cut -d "|" -f1) 
-			descrition=$(echo $line | cut -d "|" -f7)
+			description=$(echo $line | cut -d "|" -f7)
 
-			$AVAHIPROG publish $description $TYPE $port $PUBLIC_IP
+			$AVAHIPROG publish "$description" "$TYPE" "$port" "$PUBLIC_IP"
 		done
 		echo "Start $NAME"
 	else
