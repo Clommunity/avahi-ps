@@ -29,10 +29,10 @@ memory_add_service(){
 
 	if [ $(ps fax| grep "avahi-publish-service -H ${NODENAME}.${CLOUD_NAME}.local"|grep "$2 $3"|grep -v grep|wc -l) -eq 0 ]
 		then
-		avahi-publish-service -H ${NODENAME}.${CLOUD_NAME}.local $1 $2 $3 $_TXT 2> /dev/null &
+		avahi-publish-service -H ${NODENAME}.${CLOUD_NAME}.local "$1" "$2" "$3" $_TXT 2> /dev/null &
 	fi
 
-	save_service ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP} $1 $2 $3 $_TXT 
+	save_service ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP} "$1" "$2" "$3" "$_TXT"
 }
 
 memory_rem_service(){
@@ -74,12 +74,12 @@ memory_publish_service() {
 		avahi-ps-help
 	fi
 
-	_DESCRIBE=$1
-	_TYPE="_$2._tcp"
-	_PORT=$3
+	_DESCRIBE="$1"
+	_TYPE="_${2}._tcp"
+	_PORT="$3"
 	_TXT=${4:-""}
 	memory_add_host 
-	memory_add_service $_DESCRIBE $_TYPE $_PORT $_TXT
+	memory_add_service "$_DESCRIBE" "$_TYPE" "$_PORT" $_TXT
 }
 
 memory_unpublish_service(){

@@ -106,7 +106,7 @@ etcd_publish_service() {
 	_TYPE="$2"
 	_PORT="$3"
 	_TXT=${4:-""}
-	etcd_add_service $_DESCRIBE $_TYPE $_PORT $_TXT
+	etcd_add_service "$_DESCRIBE" "$_TYPE" "$_PORT" $_TXT
 }
 
 etcd_unpublish_service(){
