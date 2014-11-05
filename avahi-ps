@@ -87,7 +87,21 @@ if [[ -f $AVAHIPS_FILE ]]
 then
 	. $AVAHIPS_FILE
 fi
-
+if [[ ! -z "$SEARCH_ONLY" ]]
+then
+	if [[ "$SEARCH_ONLY" == "avahi" ]]
+	then
+			ERRORS_PLUG="errors"
+			EXECUTE_IN="memory"
+			SAVE_SERVICE="none"
+			DATABASE="none"
+	else
+			ERRORS_PLUG="errors"
+			EXECUTE_IN="none"
+			SAVE_SERVICE="none"
+			DATABASE="$SEARCH_ONLY"
+	fi
+fi
 load_plug "$ERRORS_PLUG"
 load_plug "$EXECUTE_IN"
 load_plug_if_exists "$SAVE_SERVICE"
