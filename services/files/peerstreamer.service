@@ -12,17 +12,8 @@ DEBUG=0
 NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
 
 start() {
-	#correr pscontroller info
-	#aturar els serveis que quedin
-	#republicar els servei
-
-	#Confirmar si el start ha de parar els serveis inactius
-
-		# if els ha de parar:
 	
-			check #Aturem els inactius
-
-		# fi
+	check #Aturem els inactius
 
 	if [ -s  $FILEPEERS ]
 	then
