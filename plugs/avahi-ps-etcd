@@ -35,8 +35,9 @@ etcd_add_service(){
 	Service=$2
 	HostID=$(calculate_hash)
 	ServerID=$(calculate_hash $3)
+	Desc=$(echo $1|sed 's/ /_/g')
 
-	value='{"type":"'$2'","description":"'$1'","host":"'${NODENAME}.${CLOUD_NAME}.local'","ip":"'${PUBLIC_IP}'","port":"'$3'","microcloud":"'$DEVICE_NAME'","txt":"'$_TXT'"}'
+	value='{"type":"'$2'","description":"'$Desc'","host":"'${NODENAME}.${CLOUD_NAME}.local'","ip":"'${PUBLIC_IP}'","port":"'$3'","microcloud":"'$DEVICE_NAME'","txt":"'$_TXT'"}'
 
 	url_nodes="$URLBASE/nodes"
 
