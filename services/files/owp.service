@@ -3,7 +3,7 @@
 
 AVAHIPS=/usr/sbin/avahi-ps
 NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
-DESCRIBE="Syncthing instance running"
+DESCRIBE="OpenVZ Web panel"
 TYPE=owp
 PORT=3000
 
