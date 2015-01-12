@@ -1,0 +1,55 @@
+#!/bin/sh
+#OpenVZ Web Panel file
+
+AVAHIPS=/usr/sbin/avahi-ps
+NAME=$(basename $0|sed -n 's/\(.*\).service/\1/p')
+DESCRIBE="Syncthing instance running"
+TYPE=owp
+PORT=3000
+
+start()
+{
+	echo "Start $NAME"
+	$AVAHIPS publish "$DESCRIBE" $TYPE $PORT "$TXT"
+}
+
+stop()
+{
+	echo "Stop $NAME"
+	$AVAHIPS unpublish $TYPE $PORT
+}
+
+check()
+{
+	[ ! -f $CONFIG_FILE ] && return 1
+
+	netstat -nlt | grep ":$PORT" | grep -q LISTEN || return 1
+
+	return 0
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	check)
+		if check 
+		then
+			start
+		else
+			stop
+		fi
+		;;
+	isActive)
+		echo -n "$NAME "
+		check && (echo "UP"; exit 0) || (echo "DOWN";exit 1)
+		;;
+	*)
+		exit 1
+		;;
+esac
+
+exit 0
