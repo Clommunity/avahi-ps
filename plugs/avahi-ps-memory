@@ -29,7 +29,13 @@ memory_add_service(){
 
 	if [ $(ps fax| grep "avahi-publish-service -H ${NODENAME}.${CLOUD_NAME}.local"|grep "$2 $3"|grep -v grep|wc -l) -eq 0 ]
 	then
-		avahi-publish-service -H ${NODENAME}.${CLOUD_NAME}.local "$1" "$2" "$3" "$_TXT" 2> /dev/null &
+		if [ -z "$_TXT" ] 
+		then
+			avahi-publish-service -H ${NODENAME}.${CLOUD_NAME}.local "$1" "$2" "$3" 2> /dev/null &
+		else
+			avahi-publish-service -H ${NODENAME}.${CLOUD_NAME}.local "$1" "$2" "$3" "$_TXT" 2> /dev/null & 
+		fi
+
 	fi
 
 	save_service ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP} "$1" "$2" "$3" "$_TXT"
