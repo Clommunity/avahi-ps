@@ -7,17 +7,20 @@ memory_add_host(){
 	# Validate if exist address node.
 	if [ $(avahi-resolve-address -n ${NODENAME}.${CLOUD_NAME}.local 2> /dev/null | grep "${PUBLIC_IP}" | wc -l) -lt 1 ]
 	then 
-		avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP} 2> /dev/null &
+		if ! pidof avahi-publish-address > /dev/null 2>&1
+		then
+			avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP} 2> /dev/null &
+		fi
 	fi
 
 }
 
 memory_rem_host(){
 	
-		local _PROCES
+	local _PROCES
 
-		_PROCES=$(ps fuax| grep "avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP}"|grep -v grep|awk '{print $2}')
-		[ ! -z "$_PROCES" ] && kill -9 $_PROCES
+	_PROCES=$(ps fuax| grep "avahi-publish-address -R ${NODENAME}.${CLOUD_NAME}.local ${PUBLIC_IP}"|grep -v grep|awk '{print $2}')
+	[ ! -z "$_PROCES" ] && kill -9 $_PROCES
 
 }
 
