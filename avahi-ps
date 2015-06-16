@@ -61,7 +61,7 @@ then
 	PUBLIC_DEVICE="${INTERNAL_DEV}"
 fi
 
-if [[ -z "$PUBLIC_IP"]]
+if [[ -z "$PUBLIC_IP" ]]
 then
  	PUBLIC_IP=$(ip addr show dev $PUBLIC_DEVICE|grep "global.* $PUBLIC_DEVICE\$"|awk '{print $2}'|awk -F "/" {'print $1'})
 fi
