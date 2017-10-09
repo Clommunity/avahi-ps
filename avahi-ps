@@ -52,18 +52,31 @@ CLOUD_NAME="guifi"
 #DEVICE_NAME="${CLOUD_NAME}"
 DEVICE_NAME="demo"
 GETINCONF_FILE=/etc/getinconf-client.conf
+CLOUDYCONF_FILE=/etc/cloudy/cloudy.conf
 
 # Calculate Variables.
 if [[ -f $GETINCONF_FILE ]]
 then
 	. $GETINCONF_FILE
 	DEVICE_NAME="${NETWORK_NAME}"
-	PUBLIC_DEVICE="${INTERNAL_DEV}"
+	if [[ $GETINCONF_IGNORE != "1" ]]
+	then
+		PUBLIC_DEVICE="${INTERNAL_DEV}"
+	fi
+fi
+
+if [[ -f $CLOUDYCONF_FILE ]]
+then
+	. $CLOUDYCONF_FILE
+	if [[ $PRIMARYINTERFACE != "" ]]
+	then
+		PUBLIC_DEVICE="${PRIMARYINTERFACE}"
+	fi
 fi
 
 if [[ -z "$PUBLIC_IP" ]]
 then
- 	PUBLIC_IP=$(ip addr show dev $PUBLIC_DEVICE|grep "global.* $PUBLIC_DEVICE\$"|awk '{print $2}'|awk -F "/" {'print $1'})
+	PUBLIC_IP=$(ip addr show dev $PUBLIC_DEVICE|grep "global.* $PUBLIC_DEVICE\$"|awk '{print $2}'|awk -F "/" {'print $1'})
 fi
 FILENAME="avahi-ps-"
 NODENAME=$(uname -n)
