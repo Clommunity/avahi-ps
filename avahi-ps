@@ -161,8 +161,11 @@ fi
 load_plug "$ERRORS_PLUG"
 load_plug "$EXECUTE_IN"
 load_plug_if_exists "$SAVE_SERVICE"
-load_plug "$DATABASE"
-
+# The database plugs must not be loaded directly, since there can be many
+# database backends. Therefore, we load it one by one
+for db in $DATABASE; do
+  load_plug "$db"
+done
 ##############################
 # Perform the actual actions #
 ##############################
